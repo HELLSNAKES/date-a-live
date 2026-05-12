@@ -23,4 +23,7 @@ https://respectz.github.io/date-a-live/dailydate.html
 Live2DV3 (.moc3) Viewer:
 https://respectz.github.io/date-a-live/live2dv3.html
 
+Original source: https://github.com/respectZ/date-a-live
+
 Front-end modified by HELLSNAKE
+
