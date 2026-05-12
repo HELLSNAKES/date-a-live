@@ -23,5 +23,4 @@ https://respectz.github.io/date-a-live/dailydate.html
 Live2DV3 (.moc3) Viewer:
 https://respectz.github.io/date-a-live/live2dv3.html
 
-# i suck at front-end no complaint 
-# Svdex#1555
+Front-end modified by HELLSNAKE

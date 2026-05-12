@@ -326,7 +326,10 @@
         this._fadeTime += deltaTime
         //loop setting
           if(this._animation) {
-            this._animation.loop = document.getElementById('mloop').checked;
+            let mloopEl = document.getElementById('mloop');
+            if (mloopEl) {
+              this._animation.loop = mloopEl.checked;
+            }
           }
           
         if (this._animation == null || (!this._animation.loop && this._time > this._animation.duration)) {
@@ -1921,7 +1924,8 @@
             
             this.audio.addEventListener('canplay', function() {l.play(m)}, false);
              //subtitle
-             if(!document.getElementById('subtitle').checked) break;
+             let subtitleEl = document.getElementById('subtitle');
+             if(subtitleEl && !subtitleEl.checked) break;
             let subtitleJSON = JSON.parse(httpGet('data/subtitle.json'));
             if(subtitleJSON[this.folderName]) {
               if(subtitleJSON[this.folderName][motionId]) {

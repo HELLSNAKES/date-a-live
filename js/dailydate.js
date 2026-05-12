@@ -40,58 +40,74 @@ var dailyDate = {
     },
 
     init : function() {
-        //dismissLoading
-        $('#dismissLoading').click(function(event) {
-            dailyDate.dismissLoading();
-        })
-        //preload images
-        dailyDate.preloadImages();
-        let parent = document.getElementsByClassName('left')[0];
-        for (var i in data.spirit) {
-            var div = document.createElement('div');
-            var img = document.createElement('div');
-            div.classList.add('spirit');
-            img.classList.add('thumb');
-            //img.setAttribute('src',data.spirit[i].data.img)
-            img.style.content = 'url("' + data.spirit[i].data.img + '")';
-            div.id = i;
-            div.appendChild(img);
-            parent.appendChild(div);
+        try {
+            //dismissLoading
+            $('#dismissLoading').click(function(event) {
+                dailyDate.dismissLoading();
+            })
+            //preload images
+            dailyDate.preloadImages();
+            
+            let parent = document.getElementsByClassName('left')[0];
+            if (!parent) {
+                console.warn('Daily Date: .left element not found, skipping spirit list creation');
+                return;
+            }
+            
+            for (var i in data.spirit) {
+                var div = document.createElement('div');
+                var img = document.createElement('div');
+                div.classList.add('spirit');
+                img.classList.add('thumb');
+                //img.setAttribute('src',data.spirit[i].data.img)
+                img.style.content = 'url("' + data.spirit[i].data.img + '")';
+                div.id = i;
+                div.appendChild(img);
+                parent.appendChild(div);
+            }
+            
+            let selectedElement = document.getElementById(selected);
+            if (selectedElement) {
+                selectedElement.classList.add('selected');
+            }
+            
+            dailyDate.loadLocation(selected);
+
+            $('.spirit').click(function() {
+                //alert(this.id);
+                let prevSelected = document.getElementById(selected);
+                if (prevSelected) {
+                    prevSelected.classList.remove('selected');
+                }
+                $(this).addClass('selected');
+                $('#routelist').hide();
+                selected = this.id;
+                localStorage['dalDDSelected'] = selected;
+                //nullify #1
+                $('#locationlist').html('');
+                $('#guidelist').html('');
+                $('#routelist').html('');
+                $('#name').html('');
+                dailyDate.loadLocation(this.id);
+
+                //nullify
+                selectedLocation = '';
+                selectedRoute = '';
+
+                //banish cg
+                $("div").remove(".cg");
+            });
+            $('.popup').click(function(event) {
+                $('.poppedcg').addClass('out');
+                //$(this).css('display','none');
+                setTimeout(function() {
+                    $('.popup').css('display', 'none');
+                    $('.poppedcg').removeClass('out');
+                }, 400)
+            })
+        } catch(e) {
+            console.error('Daily Date init error:', e);
         }
-        document.getElementById(selected).classList.add('selected');
-        dailyDate.loadLocation(selected);
-
-        $('.spirit').click(function() {
-            //alert(this.id);
-            $('#' + selected).removeClass('selected');
-            $(this).addClass('selected');
-            $('#routelist').hide();
-            selected = this.id;
-            localStorage['dalDDSelected'] = selected;
-            //nullify #1
-            $('#locationlist').html('');
-            $('#guidelist').html('');
-            $('#routelist').html('');
-            $('#name').html('');
-            dailyDate.loadLocation(this.id);
-
-            //nullify
-            selectedLocation = '';
-            selectedRoute = '';
-
-            //banish cg
-            $("div").remove(".cg");
-        });
-        $('.popup').click(function(event) {
-            $('.poppedcg').addClass('out');
-            //$(this).css('display','none');
-            setTimeout(function() {
-                $('.popup').css('display', 'none');
-                $('.poppedcg').removeClass('out');
-            }, 400)
-        })
-
-        
     },
 
     loadGuide : function(spirit, location, route, int) {
