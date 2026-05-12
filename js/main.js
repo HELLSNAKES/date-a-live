@@ -1,6 +1,13 @@
 var isSideNavOpened = false;
 
+// Check if jQuery is loaded before proceeding
 function loadContent(link) {
+    if (typeof jQuery === 'undefined') {
+        // Retry if jQuery not loaded yet
+        setTimeout(function() { loadContent(link); }, 100);
+        return;
+    }
+    
     $('#main-content').fadeOut(200, function() {
         $('#main-content').load(link + ' #main-content', function() {
             history.pushState(null, null, link);
@@ -40,8 +47,8 @@ function loadContent(link) {
     })
 }
 
-$(document).ready(function() {
-	$('#buttonNav').click(function() {
+function initSideNav() {
+    $('#buttonNav').click(function() {
 		if(isSideNavOpened) {
 			$('#mySidenav').css('left','-250px');
 			$('body').css('marginLeft','0px');
@@ -51,32 +58,35 @@ $(document).ready(function() {
 		}
 		isSideNavOpened = !isSideNavOpened;
 	})
-});
+}
 
+// Wait for jQuery before running
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof jQuery !== 'undefined') {
+            $(document).ready(initSideNav);
+        }
+    });
+} else if (typeof jQuery !== 'undefined') {
+    initSideNav();
+}
 
-$(function() {
-
-    if (Modernizr.history) {
-        // history is supported; do magical things
-        $('ul.pagenav>li>a').on('click', function(e) {
-            $('.selected').removeClass('selected');
-            $(this).parent().addClass('selected');
-            e.preventDefault();
-            _href = $(this).attr("href");
-            loadContent(_href);
-            $('#buttonNav').click();
-
-
-
-        })
-
-    } else {
-
-        // history is not supported; nothing fancy here
-
-    }
-
-});
+// Handle history navigation
+if (typeof jQuery !== 'undefined') {
+    $(function() {
+        if (Modernizr && Modernizr.history) {
+            // history is supported; do magical things
+            $('ul.pagenav>li>a').on('click', function(e) {
+                $('.selected').removeClass('selected');
+                $(this).parent().addClass('selected');
+                e.preventDefault();
+                _href = $(this).attr("href");
+                loadContent(_href);
+                $('#buttonNav').click();
+            })
+        }
+    });
+}
 
 $(window).bind("popstate", function() {
     link = location.pathname.replace(/^.*[\\/]/, ""); // get filename only

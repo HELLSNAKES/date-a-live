@@ -1,36 +1,34 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Date A Live: Spirit Pledge Toolbox</title>
-	<link href="css/main.css" rel="stylesheet">
-	<link href="css/dailydate.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="css/live2d_page.css">
-
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	
-
-	<script type="text/javascript" src="js/utility.js"></script>
-	<script type="text/javascript" src="js/scrollspy.js"></script>
-	<!--main-->
-	<script type="text/javascript" src="js/main.js"></script>
-	<!--dailydate-->
-	<!--live2d-->
-	<!--live2dv3-->
-	<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script>
-    <script src="https://cdn.jsdelivr.net/npm/howler@2.1.3/dist/howler.min.js"></script>
-    <script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
-
+	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" type="image/png" href="icon/ic.png" />
+	<meta name="description" content="Date a Live: Spirit Pledge Toolbox - A compact toolbox for Daily Date guides and Live2D V3 viewer">
+	<meta name="keywords" content="datealive, spirit pledge, guide">
 	<meta name="og:title" content="Date A Live: Spirit Pledge Toolbox"/>
 	<meta property="og:url" content="https://respectz.github.io/date-a-live" />
 	<meta name="og:image" content="https://respectz.github.io/date-a-live/icon/ic.png"/>
-	<meta name="keywords" content="datealive"/>
-	<meta name="description" content="Date a Live: Spirit Pledge Toolbox"/>
+	
+	<title>Date A Live: Spirit Pledge Toolbox</title>
+	<link rel="icon" type="image/png" href="icon/ic.png" />
+	
+	<!-- Critical CSS inline for faster rendering -->
+	<link href="css/main.css" rel="stylesheet">
+
+	<!-- Preload critical resources -->
+	<link rel="preload" href="js/jquery.min.js" as="script">
+	<link rel="preload" href="js/main.js" as="script">
+	
+	<!-- DNS prefetch for CDN -->
+	<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+	<!-- jQuery - async to avoid blocking -->
+	<script async src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	
+	<!-- Modernizr for feature detection -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
 </head>
-<body>
+<body class="app-shell">
 <header>
 	<nav>
 		<ul>
@@ -41,26 +39,45 @@
 </header>
 
 <div id="mySidenav" class="sidenav">
-	<ul class="nolist pagenav" style="padding-left:0px;margin-top: 10px;">
+	<ul class="nolist pagenav">
 		<li class="selected"><a href="index.html">Main</a></li>
-		<li>Guides</li>
-		<ul class="nolist pagenav">
-			<li><a href="dailydate.html">Daily Date</a></li>
-		</ul>
-		<li>Tools</li>
-		<ul class="nolist pagenav">
-			<li><a href="live2dv3.html">Live2D V3 Viewer</a></li>
-		</ul>
+		<li class="nav-group">Guides
+			<ul class="nolist pagenav">
+				<li><a href="dailydate.html">Daily Date</a></li>
+			</ul>
+		</li>
+		<li class="nav-group">Tools
+			<ul class="nolist pagenav">
+				<li><a href="live2dv3.html">Live2D V3 Viewer</a></li>
+			</ul>
+		</li>
 	</ul>
 </div>
-
-<div class="main-container" id="main-content">
-	<div class="main-title">Welcome to Date a Live: Spirit Pledge Toolbox !</div>
+<main class="main-container" id="main-content">
+	<p class="hero-eyebrow">Date A Live</p>
+	<h1 class="main-title">Spirit Pledge Toolbox</h1>
 	<div class="main-subtitle">
-		<p>Any bugs / mistakes ? hmu on discord : Svdex#1555</p>
+		<p>A compact toolbox for Daily Date guides and the Live2D V3 viewer, tuned for quick navigation and smoother loading.</p>
+		<p>Any bugs or mistakes? hmu on Discord: Svdex#1555.</p>
 		<p>Disclaimer: I do not own any of these assets. Please note that all assets and copyrights belong to their original owners. No copyright infringement intended.</p>
 	</div>
-</div>
+	<div class="hero-actions">
+		<a class="hero-button primary" href="dailydate.html">Open Daily Date</a>
+		<a class="hero-button secondary" href="live2dv3.html">Open Live2D V3 Viewer</a>
+	</div>
+</main>
+
+<footer>
+	Developed by Svdex
+</footer>
+
+<!-- Utility scripts loaded after content -->
+<script type="text/javascript" src="js/utility.js" defer></script>
+<script type="text/javascript" src="js/scrollspy.js" defer></script>
+<!-- Main app script -->
+<script type="text/javascript" src="js/main.js" defer></script>
+</body>
+</html>
 
 <footer>
 	Developed by Svdex
