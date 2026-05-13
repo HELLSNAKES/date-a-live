@@ -13,17 +13,15 @@ All assets belongs to the original creators.
 
 thanks to [n0k0m3](https://github.com/n0k0m3/) for decrypted assets, etc
 thanks to Binah for exclusive l2d models
-
+Original source: https://github.com/respectZ/date-a-live
 Main Page:
-https://respectz.github.io/date-a-live/dailydate/
+https://date-a-live.pages.dev/
 
 Daily Date:
-https://respectz.github.io/date-a-live/dailydate.html
+https://date-a-live.pages.dev/dailydate.html
 
 Live2DV3 (.moc3) Viewer:
-https://respectz.github.io/date-a-live/live2dv3.html
-
-Original source: https://github.com/respectZ/date-a-live
+https://date-a-live.pages.dev/live2dv3.html
 
 Front-end modified by HELLSNAKE
 
