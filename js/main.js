@@ -1,5 +1,8 @@
 var isSideNavOpened = false;
 var isLoading = false;
+var loadAttempts = 0;
+var maxLoadAttempts = 3;
+var isSettingNavOpened = false;  // Track settings sidebar state
 
 // Check if jQuery is loaded before proceeding
 function loadContent(link) {
@@ -12,15 +15,49 @@ function loadContent(link) {
     }
     
     isLoading = true;
+    loadAttempts = 0;
+    loadContentWithRetry(link);
+}
+
+function loadContentWithRetry(link) {
+    loadAttempts++;
     
     $('#main-content').fadeOut(200, function() {
-        $('#main-content').load(link + ' #main-content', function(response, status, xhr) {
-            if (status === 'error') {
-                console.error('Failed to load:', link, xhr.status, xhr.statusText);
+        var loadTimeout = setTimeout(function() {
+            console.error('Load timeout for:', link);
+            if (loadAttempts < maxLoadAttempts) {
+                console.log('Retrying... Attempt', loadAttempts + 1);
+                $('#main-content').fadeIn(200);
+                loadContentWithRetry(link);
+            } else {
                 isLoading = false;
                 $('#main-content').fadeIn(200);
+                alert('Failed to load page after ' + maxLoadAttempts + ' attempts. Please refresh.');
+            }
+        }, 5000); // 5 second timeout
+        
+        $('#main-content').load(link + ' #main-content', function(response, status, xhr) {
+            clearTimeout(loadTimeout);
+            
+            if (status === 'error') {
+                console.error('Failed to load:', link, xhr.status, xhr.statusText);
+                if (loadAttempts < maxLoadAttempts) {
+                    console.log('Retrying... Attempt', loadAttempts + 1);
+                    $('#main-content').fadeIn(200, function() {
+                        setTimeout(function() {
+                            loadContentWithRetry(link);
+                        }, 500);
+                    });
+                } else {
+                    isLoading = false;
+                    $('#main-content').fadeIn(200);
+                    alert('Failed to load page after ' + maxLoadAttempts + ' attempts.');
+                }
                 return;
             }
+            
+            // Hide settings button by default
+            $('#settingButton').removeClass('visible');
             
             try {
                 history.pushState(null, null, link);
@@ -28,10 +65,33 @@ function loadContent(link) {
                 console.warn('History push failed:', e);
             }
             
+            // Close sidebar after successful page load
+            if(isSideNavOpened) {
+                $('#mySidenav').css('left','-250px');
+                $('body').css('marginLeft','0px');
+                isSideNavOpened = false;
+            }
+            
             $('#main-content').fadeIn(200, function() {
                 isLoading = false;
                 
+                // Ensure sidebar is closed after page load
+                if(isSideNavOpened) {
+                    console.log('Force closing sidebar after load');
+                    closeSidebar();
+                }
+                
             	if(link == "dailydate.html") {
+                    console.log('Loading dailydate - hiding settings button');
+                    $('#settingButton').removeClass('visible');
+                    
+                    // Close settings nav if open
+                    isSettingNavOpened = false;
+                    var sidenav = document.getElementsByClassName("l2dv3-sidenav");
+                    if(sidenav.length > 0) {
+                        sidenav[0].style.right = "-250px";
+                    }
+                    
                     if(typeof dailyDate == "undefined") {
                         $.getScript('js/dailydate.js', function() {
                             try {
@@ -56,6 +116,48 @@ function loadContent(link) {
                     }
             	}
             	else if(link == "live2dv3.html") {
+                    console.log('Loading live2dv3 - showing settings button');
+                    $('#settingButton').addClass('visible');
+                    
+                    // Attach settings button handler here (after page load)
+                    setTimeout(function() {
+                        console.log('Attaching settingButton click handler from main.js');
+                        $('#settingButton').off('click').on('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log('Settings button clicked');
+                            
+                            // Toggle nav directly
+                            var sidenav = document.getElementsByClassName("l2dv3-sidenav")[0];
+                            if(!sidenav) {
+                                console.warn('l2dv3-sidenav not found');
+                                return;
+                            }
+                            
+                            if (!isSettingNavOpened) {
+                                // Open nav
+                                sidenav.style.right = "0px";
+                                sidenav.style.paddingLeft = "10px";
+                                var settingBtn = document.getElementById("settingButton");
+                                if(settingBtn) {
+                                    settingBtn.style.marginRight = "260px";
+                                }
+                                isSettingNavOpened = true;
+                                console.log('Settings nav opened');
+                            } else {
+                                // Close nav
+                                sidenav.style.right = "-250px";
+                                sidenav.style.paddingLeft = "0px";
+                                var settingBtn = document.getElementById("settingButton");
+                                if(settingBtn) {
+                                    settingBtn.style.marginRight = "0px";
+                                }
+                                isSettingNavOpened = false;
+                                console.log('Settings nav closed');
+                            }
+                        })
+                    }, 200);
+                    
                     if(typeof Live2DViewer == "undefined") {
                         // Load dependencies in proper sequential order
                         $.getScript('https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.6.1/pixi.min.js', function() {
@@ -98,22 +200,81 @@ function loadContent(link) {
                     }
             		
             	}
+            	
+            	// Reinitialize sidebar handlers for new page
+            	initSideNav();
             });
         })
     })
 }
 
+function closeSidebar() {
+    if(isSideNavOpened) {
+        console.log('Closing sidebar - setting left: -250px');
+        $('#mySidenav').css('left','-250px');
+        $('body').css('marginLeft','0px');
+        isSideNavOpened = false;
+        console.log('Sidebar closed - isSideNavOpened:', isSideNavOpened);
+        console.log('Sidebar CSS left:', $('#mySidenav').css('left'));
+    }
+}
+
 function initSideNav() {
-    $('#buttonNav').click(function() {
-		if(isSideNavOpened) {
-			$('#mySidenav').css('left','-250px');
-			$('body').css('marginLeft','0px');
-		} else {
-			$('#mySidenav').css('left','0px');
-			$('body').css('marginLeft','250px');
-		}
-		isSideNavOpened = !isSideNavOpened;
-	})
+    // Ensure sidebar starts closed
+    $('#mySidenav').css('left','-250px');
+    $('body').css('marginLeft','0px');
+    isSideNavOpened = false;
+    console.log('Sidebar reset to closed state');
+    
+    // Remove old handlers to prevent duplicates
+    $('#buttonNav').off('click');
+    $(document).off('click.sidebar');
+    $('#mySidenav').off('click');
+    
+    // Hamburger button click
+    $('#buttonNav').on('click', function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        console.log('Hamburger clicked');
+        if(isSideNavOpened) {
+            closeSidebar();
+        } else {
+            $('#mySidenav').css('left','0px');
+            $('body').css('marginLeft','250px');
+            isSideNavOpened = true;
+            console.log('Sidebar opened');
+        }
+    })
+	
+    // Close sidebar when clicking outside
+    $(document).on('click.sidebar', function(e) {
+        if(isSideNavOpened && !$(e.target).closest('#mySidenav, #buttonNav').length) {
+            console.log('Click outside - closing sidebar');
+            closeSidebar();
+        }
+    })
+	
+    // Close sidebar when clicking anywhere inside sidebar
+    $('#mySidenav').on('click', function(e) {
+        var target = $(e.target);
+        // Check if clicked on a link
+        var link = target.closest('a');
+        if(link.length) {
+            var href = link.attr('href');
+            console.log('Sidebar click - link href:', href);
+            closeSidebar();
+            if(href) {
+                // Full page reload instead of AJAX load
+                // This ensures all elements reset and no state conflicts
+                console.log('Navigating to:', href);
+                setTimeout(function() {
+                    window.location.href = href;
+                }, 300);
+            }
+        }
+    })
+	
+    console.log('Sidebar handlers initialized - found ' + $('#mySidenav a').length + ' links');
 }
 
 // Wait for jQuery before running
@@ -123,14 +284,25 @@ if (document.readyState === 'loading') {
             $(document).ready(function() {
                 initSideNav();
                 
-                // Auto-init Live2D for live2dv3.html if content exists
-                if (typeof Live2DViewer === 'undefined' && $('#main-content #models').length > 0) {
-                    loadLive2D();
-                }
-                
-                // Auto-init Daily Date for dailydate.html if content exists
-                if (typeof dailyDate === 'undefined' && $('#main-content .left').length > 0) {
-                    loadDailyDate();
+                // Check which page is loaded and show/hide settings button
+                if ($('#main-content #models').length > 0) {
+                    // Live2D V3 page
+                    console.log('Initial load - Live2D page detected, showing settings');
+                    $('#settingButton').addClass('visible');
+                    if(typeof Live2DViewer === 'undefined') {
+                        loadLive2D();
+                    }
+                } else if ($('#main-content .left').length > 0) {
+                    // Daily Date page
+                    console.log('Initial load - Daily Date page detected, hiding settings');
+                    $('#settingButton').removeClass('visible');
+                    if(typeof dailyDate === 'undefined') {
+                        loadDailyDate();
+                    }
+                } else {
+                    // Main/other pages
+                    console.log('Initial load - Main page detected, hiding settings');
+                    $('#settingButton').removeClass('visible');
                 }
             });
         }
@@ -139,14 +311,25 @@ if (document.readyState === 'loading') {
     $(document).ready(function() {
         initSideNav();
         
-        // Auto-init Live2D for live2dv3.html if content exists
-        if (typeof Live2DViewer === 'undefined' && $('#main-content #models').length > 0) {
-            loadLive2D();
-        }
-        
-        // Auto-init Daily Date for dailydate.html if content exists
-        if (typeof dailyDate === 'undefined' && $('#main-content .left').length > 0) {
-            loadDailyDate();
+        // Check which page is loaded and show/hide settings button
+        if ($('#main-content #models').length > 0) {
+            // Live2D V3 page
+            console.log('Document.ready - Live2D page detected, showing settings');
+            $('#settingButton').addClass('visible');
+            if(typeof Live2DViewer === 'undefined') {
+                loadLive2D();
+            }
+        } else if ($('#main-content .left').length > 0) {
+            // Daily Date page
+            console.log('Document.ready - Daily Date page detected, hiding settings');
+            $('#settingButton').removeClass('visible');
+            if(typeof dailyDate === 'undefined') {
+                loadDailyDate();
+            }
+        } else {
+            // Main/other pages
+            console.log('Document.ready - Main page detected, hiding settings');
+            $('#settingButton').removeClass('visible');
         }
     });
 }
