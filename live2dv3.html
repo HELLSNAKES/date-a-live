@@ -2,7 +2,10 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ca3e47">
     <meta name="description" content="Live2D V3 Viewer for Date a Live: Spirit Pledge">
     <meta name="keywords" content="live2d, viewer, datealive">
     <meta name="og:title" content="Date A Live: Spirit Pledge Toolbox"/>
@@ -34,6 +37,10 @@
         <ul>
             <li id="buttonNav">&#9776;</li>
             <li>Date A Live: Spirit Pledge Toolbox</li>
+            <li id="settingButton" title="Settings" style="margin-left: auto; margin-right: 0; display: flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 6px; font-size: 16px; font-weight: 500;">
+                <span style="font-size: 18px;">⚙️</span>
+                <span style="display: none;">Settings</span>
+            </li>
         </ul>
     </nav>
 </header>
@@ -54,9 +61,6 @@
 </div>
 
 <div id="main-content">
-    <div>
-        <span style="font-size:30px;cursor:pointer;float: right;color: white;margin-top: 10px;" id="settingButton">&#9881;</span>
-    </div>
     <div class="l2dv3-sidenav">
         <label for="model">Live2D Model</label><br>
         <div>
@@ -125,9 +129,6 @@
     </div>
 
 </div>
-<footer>
-    Developed by Svdex
-</footer>
 
 <!-- Load external polyfills for compatibility -->
 <script defer src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"></script>

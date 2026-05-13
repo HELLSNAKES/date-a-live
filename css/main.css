@@ -19,6 +19,10 @@ body {
     overflow: hidden;
     transition: margin-left 0.3s ease;
     color: #fff;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
 }
 
 header {
@@ -47,6 +51,28 @@ header nav ul {
 header nav ul li {
     margin: 0 15px 0 0;
     font-size: 16px;
+}
+
+@media only screen and (max-width: 768px) {
+    header nav ul li {
+        margin: 0 10px 0 0;
+        font-size: 14px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    header {
+        height: 50px;
+    }
+    
+    header nav ul li {
+        margin: 0 8px 0 0;
+        font-size: 12px;
+    }
+    
+    header nav ul li:not(:first-child) {
+        display: none;
+    }
 }
 
 header nav ul li:first-child {
@@ -162,6 +188,19 @@ ul.pagenav > li.selected > a {
     padding: 40px 20px;
     text-align: center;
     overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+@media only screen and (max-width: 768px) {
+  .main-container {
+    padding: 30px 15px;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .main-container {
+    padding: 20px 12px;
+  }
 }
 
 .hero-eyebrow {
@@ -182,6 +221,20 @@ ul.pagenav > li.selected > a {
     -webkit-text-fill-color: transparent;
     background-clip: text;
     line-height: 1.2;
+}
+
+@media only screen and (max-width: 768px) {
+  .main-title {
+    font-size: 36px;
+    margin: 0 0 20px 0;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .main-title {
+    font-size: 28px;
+    margin: 0 0 15px 0;
+  }
 }
 
 .main-subtitle {
@@ -229,6 +282,15 @@ ul.pagenav > li.selected > a {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    touch-action: manipulation;
+}
+
+@media only screen and (max-width: 480px) {
+  .hero-button {
+    padding: 12px 30px;
+    font-size: 14px;
+    border-radius: 6px;
+  }
 }
 
 .hero-button.primary {
@@ -271,5 +333,17 @@ footer {
     border-left: 3px solid #ca3e47;
     border-radius: 4px;
     font-size: 13px;
+    z-index: 5;
+    pointer-events: none;
+}
+
+@media only screen and (max-width: 480px) {
+    footer {
+        right: 10px;
+        bottom: 10px;
+        padding: 10px 15px;
+        font-size: 11px;
+    }
+}
     backdrop-filter: blur(10px);
 }

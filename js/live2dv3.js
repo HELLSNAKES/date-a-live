@@ -1702,6 +1702,25 @@
         }
       }
       this.isClick = false
+      this.touchStartX = 0
+      this.touchStartY = 0
+      this.touchThreshold = 10 // pixels
+      
+      // Helper function to get coordinates from mouse or touch event
+      const getCoordinates = (event) => {
+        let offsetX, offsetY
+        if (event.touches && event.touches.length > 0) {
+          const rect = this.app.view.getBoundingClientRect()
+          offsetX = event.touches[0].clientX - rect.left
+          offsetY = event.touches[0].clientY - rect.top
+        } else {
+          offsetX = event.offsetX
+          offsetY = event.offsetY
+        }
+        return { offsetX, offsetY }
+      }
+      
+      // Mouse events
       this.app.view.addEventListener('mousedown', (event) => {
         this.isClick = true
       })
@@ -1720,6 +1739,73 @@
           this.model.pointerY = -mouseY / this.app.view.width
         }
       })
+      
+      // Touch events for mobile
+      this.app.view.addEventListener('touchstart', (event) => {
+        event.preventDefault()
+        this.isClick = true
+        if (event.touches.length > 0) {
+          this.touchStartX = event.touches[0].clientX
+          this.touchStartY = event.touches[0].clientY
+        }
+      }, { passive: false })
+      
+      this.app.view.addEventListener('touchmove', (event) => {
+        event.preventDefault()
+        if (this.isClick && event.touches.length > 0) {
+          // Calculate distance moved
+          const distX = Math.abs(event.touches[0].clientX - this.touchStartX)
+          const distY = Math.abs(event.touches[0].clientY - this.touchStartY)
+          
+          // Only consider it a drag if moved beyond threshold
+          if (distX > this.touchThreshold || distY > this.touchThreshold) {
+            this.isClick = false
+            if (this.model) {
+              this.model.inDrag = true
+            }
+          }
+        }
+
+        if (this.model && event.touches.length > 0) {
+          const coords = getCoordinates(event)
+          const mouseX = this.model.position.x - coords.offsetX
+          const mouseY = this.model.position.y - coords.offsetY
+          this.model.pointerX = -mouseX / this.app.view.height
+          this.model.pointerY = -mouseY / this.app.view.width
+        }
+      }, { passive: false })
+      
+      this.app.view.addEventListener('touchend', (event) => {
+        event.preventDefault()
+        if (!this.model) {
+          this.isClick = false
+          return
+        }
+
+        if (this.isClick && event.changedTouches.length > 0) {
+          const rect = this.app.view.getBoundingClientRect()
+          const offsetX = event.changedTouches[0].clientX - rect.left
+          const offsetY = event.changedTouches[0].clientY - rect.top
+          
+          // Same hit detection as mouse
+          if (this.isHit('HitArea', offsetX, offsetY)) {
+            console.log('head')
+            if(this.model.motions.get('id_favor'+favorLevel+'_'+1)) this.startAnimation('id_favor'+favorLevel+'_'+1, 'base')
+          }
+          if (this.isHit('HitArea2', offsetX, offsetY)) {
+            console.log('pai')
+            if(this.model.motions.get('id_favor'+favorLevel+'_'+2)) this.startAnimation('id_favor'+favorLevel+'_'+2, 'base')
+          }
+          if (this.isHit('HitArea3', offsetX, offsetY)) {
+            console.log('idk')
+            if(this.model.motions.get('id_favor'+favorLevel+'_'+3)) this.startAnimation('id_favor'+favorLevel+'_'+3, 'base')
+          }
+        }
+        
+        this.isClick = false
+        this.model.inDrag = false
+      }, { passive: false })
+      
       this.app.view.addEventListener('mouseup', (event) => {
         if (!this.model) {
           return

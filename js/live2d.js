@@ -38,13 +38,31 @@ function loadModel(model) {
         }
     });
     gModel = model;
-  // handle dragging
-
-  /*
-  model.on('pointerdown', () => model.dragging = true);
-  model.on('pointerup', () => model.dragging = false);
-  model.on('pointermove', e => model.dragging && model.position.copyFrom(e.data.global));
-  */
+  // handle dragging with touch support
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  if (!isMobile) {
+    // Only enable dragging on desktop
+    model.on('pointerdown', () => model.dragging = true);
+    model.on('pointerup', () => model.dragging = false);
+    model.on('pointermove', e => model.dragging && model.position.copyFrom(e.data.global));
+  } else {
+    // Mobile optimizations
+    model.interactive = true;
+    model.buttonMode = true;
+    
+    // Disable pointer events for smoother touch
+    app.view.style.touchAction = 'none';
+    
+    // Improve hit detection responsiveness
+    model.on('pointerdown', function(e) {
+      e.stopPropagation();
+    });
+    
+    model.on('pointerup', function(e) {
+      e.stopPropagation();
+    });
+  }
 
   //handle sounds
   });
