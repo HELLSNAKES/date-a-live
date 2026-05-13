@@ -139,8 +139,13 @@ var Live2DViewer = {
     },
 
     openNav : function() {
-        document.getElementsByClassName("l2dv3-sidenav")[0].style.right = "0px";
-        document.getElementsByClassName("l2dv3-sidenav")[0].style.paddingLeft = "10px";
+        var sidenav = document.getElementsByClassName("l2dv3-sidenav")[0];
+        var canvas = document.getElementById("L2dCanvas");
+        if(sidenav) {
+            sidenav.style.right = "0px";
+            sidenav.style.paddingLeft = "10px";
+        }
+        if(canvas) canvas.style.zIndex = "-1";
         var settingBtn = document.getElementById("settingButton");
         if(settingBtn) {
             settingBtn.style.marginRight = "260px";
@@ -148,8 +153,13 @@ var Live2DViewer = {
     },
 
     closeNav : function() {
-        document.getElementsByClassName("l2dv3-sidenav")[0].style.right = "-250px";
-        document.getElementsByClassName("l2dv3-sidenav")[0].style.paddingLeft = "0px";
+        var sidenav = document.getElementsByClassName("l2dv3-sidenav")[0];
+        var canvas = document.getElementById("L2dCanvas");
+        if(sidenav) {
+            sidenav.style.right = "-250px";
+            sidenav.style.paddingLeft = "0px";
+        }
+        if(canvas) canvas.style.zIndex = "0";
         var settingBtn = document.getElementById("settingButton");
         if(settingBtn) {
             settingBtn.style.marginRight = "0px";

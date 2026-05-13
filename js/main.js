@@ -4,6 +4,47 @@ var loadAttempts = 0;
 var maxLoadAttempts = 3;
 var isSettingNavOpened = false;  // Track settings sidebar state
 
+// Global settings button toggle function - MUST be at global scope
+function toggleSettings(e) {
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    console.log('Settings button activated');
+    
+    // Toggle nav directly
+    var sidenav = document.getElementsByClassName("l2dv3-sidenav")[0];
+    var canvas = document.getElementById("L2dCanvas");
+    if(!sidenav) {
+        console.warn('l2dv3-sidenav not found');
+        return;
+    }
+    
+    if (!isSettingNavOpened) {
+        // Open nav
+        sidenav.style.right = "0px";
+        sidenav.style.paddingLeft = "10px";
+        if(canvas) canvas.style.zIndex = "-1";
+        var settingBtn = document.getElementById("settingButton");
+        if(settingBtn) {
+            settingBtn.style.marginRight = "260px";
+        }
+        isSettingNavOpened = true;
+        console.log('Settings nav opened');
+    } else {
+        // Close nav
+        sidenav.style.right = "-250px";
+        sidenav.style.paddingLeft = "0px";
+        if(canvas) canvas.style.zIndex = "0";
+        var settingBtn = document.getElementById("settingButton");
+        if(settingBtn) {
+            settingBtn.style.marginRight = "0px";
+        }
+        isSettingNavOpened = false;
+        console.log('Settings nav closed');
+    }
+}
+
 // Check if jQuery is loaded before proceeding
 function loadContent(link) {
     if (isLoading) return; // Prevent multiple simultaneous loads
@@ -121,41 +162,21 @@ function loadContentWithRetry(link) {
                     
                     // Attach settings button handler here (after page load)
                     setTimeout(function() {
-                        console.log('Attaching settingButton click handler from main.js');
-                        $('#settingButton').off('click').on('click', function(e) {
+                        console.log('Attaching settingButton handler from main.js');
+                        
+                        // Attach both click and touch events for better mobile support
+                        $('#settingButton').off('click').on('click', toggleSettings);
+                        $('#settingButton').off('touchend').on('touchend', function(e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            console.log('Settings button clicked');
-                            
-                            // Toggle nav directly
-                            var sidenav = document.getElementsByClassName("l2dv3-sidenav")[0];
-                            if(!sidenav) {
-                                console.warn('l2dv3-sidenav not found');
-                                return;
-                            }
-                            
-                            if (!isSettingNavOpened) {
-                                // Open nav
-                                sidenav.style.right = "0px";
-                                sidenav.style.paddingLeft = "10px";
-                                var settingBtn = document.getElementById("settingButton");
-                                if(settingBtn) {
-                                    settingBtn.style.marginRight = "260px";
-                                }
-                                isSettingNavOpened = true;
-                                console.log('Settings nav opened');
-                            } else {
-                                // Close nav
-                                sidenav.style.right = "-250px";
-                                sidenav.style.paddingLeft = "0px";
-                                var settingBtn = document.getElementById("settingButton");
-                                if(settingBtn) {
-                                    settingBtn.style.marginRight = "0px";
-                                }
-                                isSettingNavOpened = false;
-                                console.log('Settings nav closed');
-                            }
-                        })
+                            toggleSettings();
+                        });
+                        
+                        // Also attach touchstart for better mobile experience
+                        $('#settingButton').off('touchstart').on('touchstart', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        });
                     }, 200);
                     
                     if(typeof Live2DViewer == "undefined") {
@@ -311,11 +332,33 @@ if (document.readyState === 'loading') {
     $(document).ready(function() {
         initSideNav();
         
+        // Add direct touch handler to settings button for mobile support
+        var settingBtn = document.getElementById("settingButton");
+        if (settingBtn) {
+            settingBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }, { passive: false });
+            
+            settingBtn.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                // Trigger click via jQuery for consistency
+                $(this).trigger('click');
+            }, { passive: false });
+        }
+        
         // Check which page is loaded and show/hide settings button
         if ($('#main-content #models').length > 0) {
             // Live2D V3 page
             console.log('Document.ready - Live2D page detected, showing settings');
             $('#settingButton').addClass('visible');
+            
+            // Attach settings button click handler for Live2D page
+            setTimeout(function() {
+                $('#settingButton').off('click').on('click', toggleSettings);
+                console.log('Click handler attached to settings button');
+            }, 200);
             if(typeof Live2DViewer === 'undefined') {
                 loadLive2D();
             }
