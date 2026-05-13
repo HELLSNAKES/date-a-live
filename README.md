@@ -14,6 +14,7 @@ All assets belongs to the original creators.
 thanks to [n0k0m3](https://github.com/n0k0m3/) for decrypted assets, etc
 thanks to Binah for exclusive l2d models
 Original source: https://github.com/respectZ/date-a-live
+
 Main Page:
 https://date-a-live.pages.dev/
 
