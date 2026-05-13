@@ -46,7 +46,7 @@ header {
     cursor: pointer;
     z-index: 50;
     pointer-events: auto !important;
-    display: flex !important;
+    display: none !important;
     align-items: center;
     justify-content: center;
     background: rgba(202, 62, 71, 0.1);
@@ -55,6 +55,10 @@ header {
     padding: 8px 12px !important;
     color: #ca3e47;
     font-weight: 600;
+}
+
+#settingButton.visible {
+    display: flex !important;
 }
 
 #settingButton:hover {

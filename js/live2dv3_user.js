@@ -140,23 +140,26 @@ var Live2DViewer = {
 
     openNav : function() {
         document.getElementsByClassName("l2dv3-sidenav")[0].style.right = "0px";
-            document.getElementsByClassName("l2dv3-sidenav")[0].style.paddingLeft = "10px";
-            document.getElementById("settingButton").style.marginRight = "260px";
+        document.getElementsByClassName("l2dv3-sidenav")[0].style.paddingLeft = "10px";
+        var settingBtn = document.getElementById("settingButton");
+        if(settingBtn) {
+            settingBtn.style.marginRight = "260px";
+        }
     },
 
     closeNav : function() {
         document.getElementsByClassName("l2dv3-sidenav")[0].style.right = "-250px";
-            document.getElementsByClassName("l2dv3-sidenav")[0].style.paddingLeft = "0px";
-            document.getElementById("settingButton").style.marginRight = "0px";
-        },
+        document.getElementsByClassName("l2dv3-sidenav")[0].style.paddingLeft = "0px";
+        var settingBtn = document.getElementById("settingButton");
+        if(settingBtn) {
+            settingBtn.style.marginRight = "0px";
+        }
+    },
 
     init: function() {
-        document.getElementById("settingButton").onclick = function() {
-            if (!isSettingOpened) Live2DViewer.openNav();
-            else
-                Live2DViewer.closeNav();
-            isSettingOpened = !isSettingOpened;
-        }
+        // Settings button handler is now attached by main.js after page load
+        // This prevents "element not found" errors when Live2DViewer is still initializing
+        console.log('Live2DViewer.init() - settingButton handler managed by main.js');
 
         let models = JSON.parse(httpGet('data/live2dv3_models.json'));
         for (var i in models) {
